@@ -1,0 +1,33 @@
+pipeline{
+    agent any
+    tools {
+        maven 'local_mvn'
+    }
+    stages{
+        stage('clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Confirm buttom') {
+            steps {
+                sh("echo asdasdasd")
+            }
+        }
+        stage('Jenkins first Demo'){
+            steps{
+                echo "welcome to jenkins"
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/prajju1509/Practice.git']]])
+                sh "mvn -Dmaven.tst.failure.ignore=true clean package"
+            }
+        }
+    }
+    post {
+        always {
+            junit(
+                allowEmptyResults:true,
+                testResults: '*test-reports/.xml'
+            )
+        }
+    }
+}
